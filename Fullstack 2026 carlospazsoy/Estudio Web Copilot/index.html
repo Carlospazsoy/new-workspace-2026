@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e8">
+  <title>Estudio Web | HTML, CSS y JavaScript</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Estudio Web, inicio">
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+        <span>ESTUDIO<span class="brand-light">WEB</span></span>
+      </a>
+      <div class="topbar-note"><span class="status-dot"></span> CUADERNO INTERACTIVO</div>
+      <a class="topbar-link" href="README.md">Guía del proyecto <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <div class="workspace" id="inicio">
+      <aside class="sidebar" aria-label="Navegación del curso">
+        <div class="sidebar-heading">
+          <p class="eyebrow">TU RECORRIDO</p>
+          <h1>Aprende<br>construyendo.</h1>
+        </div>
+        <div class="progress-block" aria-live="polite">
+          <div class="progress-copy"><span>Progreso</span><strong id="progress-label">0 de 9</strong></div>
+          <div class="progress-track" role="progressbar" aria-label="Progreso del curso" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0">
+            <span id="progress-bar"></span>
+          </div>
+        </div>
+        <div class="filter-label eyebrow">MATERIAS</div>
+        <div class="filters" role="group" aria-label="Filtrar lecciones por materia">
+          <button class="filter-button is-active" type="button" data-filter="Todo" aria-pressed="true">Todo <span>09</span></button>
+          <button class="filter-button" type="button" data-filter="HTML" aria-pressed="false"><i class="subject-dot html-dot"></i>HTML <span>03</span></button>
+          <button class="filter-button" type="button" data-filter="CSS" aria-pressed="false"><i class="subject-dot css-dot"></i>CSS <span>03</span></button>
+          <button class="filter-button" type="button" data-filter="JavaScript" aria-pressed="false"><i class="subject-dot js-dot"></i>JavaScript <span>03</span></button>
+        </div>
+        <nav class="lesson-nav" aria-label="Lecciones">
+          <p class="eyebrow">LECCIONES</p>
+          <ol id="lesson-list"></ol>
+        </nav>
+        <p class="sidebar-footnote">Un concepto. Un ejemplo.<br>Una pequeña práctica.</p>
+      </aside>
+
+      <main class="lesson-area">
+        <div class="lesson-topline">
+          <span id="lesson-breadcrumb">HTML / FUNDAMENTOS</span>
+          <span class="lesson-count" id="lesson-count">LECCIÓN 01 / 09</span>
+        </div>
+        <article id="lesson-view" aria-live="polite" aria-busy="false"></article>
+        <footer class="lesson-footer">
+          <span>HECHO PARA APRENDER A TU RITMO</span>
+          <span>HTML <b>+</b> CSS <b>+</b> JS</span>
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

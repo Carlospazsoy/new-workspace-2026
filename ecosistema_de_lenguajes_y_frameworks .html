@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecosistema Completo de Desarrollo Web, APIs y Bases de Datos</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              js: '#f7df1e',
+              python: '#3874a6',
+              java: '#ea2d2e',
+              csharp: '#9b4f96',
+              go: '#00add8',
+              rust: '#ce412b',
+              php: '#777bb4',
+              ruby: '#cc342d',
+              db: '#0284c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 antialiased">
+
+  <!-- Header Section -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/85 border-b border-slate-800/80 px-4 py-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col gap-4">
+      
+      <!-- Top Row: Title + Search -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3 w-full md:w-auto">
+          <div class="p-2.5 bg-sky-500/10 rounded-xl border border-sky-500/20 text-sky-400">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-sky-400 bg-clip-text text-transparent">
+              Ecosistema de Lenguajes, Frameworks & DBs
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400">Visualiza Frontend, Backend, Fullstack, IA y Bases de Datos con casos reales</p>
+          </div>
+        </div>
+
+        <!-- Search Input -->
+        <div class="w-full md:w-72 relative">
+          <input type="text" id="searchInput" placeholder="Buscar por tecnología, tipo o empresa..." 
+                 class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2 pl-10 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 transition-all">
+          <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Filter Buttons Row -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar text-xs font-medium">
+        <span class="text-slate-500 text-xs mr-1 font-semibold uppercase tracking-wider hidden sm:inline">Filtrar:</span>
+        <button class="filter-btn active bg-sky-500 text-white px-3.5 py-1.5 rounded-lg transition-all border border-sky-400/30 whitespace-nowrap" data-filter="all">🌐 Todos</button>
+        <button class="filter-btn bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap" data-filter="frontend">💻 Frontend</button>
+        <button class="filter-btn bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-500/30 px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap" data-filter="backend">⚙️ Backend</button>
+        <button class="filter-btn bg-slate-900 hover:bg-slate-800 text-purple-400 border border-purple-500/30 px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap" data-filter="fullstack">🚀 Fullstack</button>
+        <button class="filter-btn bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-cyan-500/30 px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap" data-filter="database">🗄️ Bases de Datos</button>
+        <button class="filter-btn bg-slate-900 hover:bg-slate-800 text-rose-400 border border-rose-500/30 px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap" data-filter="ai">🤖 IA / Data Science</button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-8 mt-6">
+
+    <!-- Category Summary Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
+      <div class="p-3.5 rounded-xl bg-slate-900/50 border border-emerald-500/20 flex flex-col">
+        <div class="flex items-center justify-between text-emerald-400 text-xs font-semibold mb-1">
+          <span>Frontend</span>
+          <span>💻</span>
+        </div>
+        <p class="text-xs text-slate-400">Interacción visual y UI en el navegador</p>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/50 border border-amber-500/20 flex flex-col">
+        <div class="flex items-center justify-between text-amber-400 text-xs font-semibold mb-1">
+          <span>Backend</span>
+          <span>⚙️</span>
+        </div>
+        <p class="text-xs text-slate-400">Lógica del servidor, APIs y reglas de negocio</p>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/50 border border-purple-500/20 flex flex-col">
+        <div class="flex items-center justify-between text-purple-400 text-xs font-semibold mb-1">
+          <span>Fullstack</span>
+          <span>🚀</span>
+        </div>
+        <p class="text-xs text-slate-400">Sincronización unificada Cliente + Servidor</p>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/50 border border-cyan-500/20 flex flex-col">
+        <div class="flex items-center justify-between text-cyan-400 text-xs font-semibold mb-1">
+          <span>Bases de Datos</span>
+          <span>🗄️</span>
+        </div>
+        <p class="text-xs text-slate-400">Persistencia, caché y almacenamiento vectorial</p>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/50 border border-rose-500/20 flex flex-col col-span-2 sm:col-span-1">
+        <div class="flex items-center justify-between text-rose-400 text-xs font-semibold mb-1">
+          <span>IA / Data</span>
+          <span>🤖</span>
+        </div>
+        <p class="text-xs text-slate-400">Modelos LLM, vectores y análisis intensivo</p>
+      </div>
+    </div>
+
+    <!-- Cards Grid Container -->
+    <div id="techGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+
+      <!-- ==================== 1. JAVASCRIPT / TYPESCRIPT ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-yellow-500/30 hover:border-yellow-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="frontend backend fullstack"
+           data-search="javascript typescript js ts react vue angular svelte nextjs express nestjs meta facebook instagram netflix uber frontend backend fullstack">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JS" class="w-10 h-10 rounded-lg p-1 bg-yellow-500/10 border border-yellow-500/20">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TS" class="w-10 h-10 rounded-lg p-1 bg-blue-500/10 border border-blue-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">JavaScript / TypeScript</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Frontend</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">El rey absoluto de la web interactiva en navegador y altamente popular en backend asíncrono con Node.js y Deno.</p>
+
+          <!-- Frameworks & Classification -->
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-emerald-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Frameworks Frontend (Cliente)
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" class="w-4 h-4" alt="React">
+                    <span class="text-xs font-medium text-slate-200">React</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Frontend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" class="w-4 h-4" alt="Vue">
+                    <span class="text-xs font-medium text-slate-200">Vue.js</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Frontend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" class="w-4 h-4" alt="Angular">
+                    <span class="text-xs font-medium text-slate-200">Angular</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Frontend</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Frameworks Backend & Fullstack
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" class="w-4 h-4 bg-white rounded-full p-0.5" alt="Next.js">
+                    <span class="text-xs font-medium text-slate-200">Next.js</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Fullstack</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" class="w-4 h-4 bg-white rounded p-0.5" alt="Express">
+                    <span class="text-xs font-medium text-slate-200">Express</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg" class="w-4 h-4" alt="NestJS">
+                    <span class="text-xs font-medium text-slate-200">NestJS</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real Cases -->
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg" class="w-3.5 h-3.5" alt="Meta">
+              <span class="text-slate-200 font-medium">Meta</span>
+              <span class="text-[10px] text-emerald-400">(React Frontend)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/netflix/E50914" class="w-3.5 h-3.5" alt="Netflix">
+              <span class="text-slate-200 font-medium">Netflix</span>
+              <span class="text-[10px] text-purple-400">(Next.js Fullstack)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/uber/FFFFFF" class="w-3.5 h-3.5" alt="Uber">
+              <span class="text-slate-200 font-medium">Uber</span>
+              <span class="text-[10px] text-amber-400">(Node Backend)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 2. PYTHON ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-sky-500/30 hover:border-sky-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend ai fullstack"
+           data-search="python fastapi django flask pytorch pandas instagram openai spotify backend ai data science fullstack">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="w-10 h-10 rounded-lg p-1 bg-sky-500/10 border border-sky-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">Python</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">IA & Data</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">La referencia mundial en IA y análisis de datos, además de contar con potentes frameworks web asíncronos y robustos.</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Backend & APIs
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" class="w-4 h-4" alt="FastAPI">
+                    <span class="text-xs font-medium text-slate-200">FastAPI</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" class="w-4 h-4 bg-white rounded p-0.5" alt="Django">
+                    <span class="text-xs font-medium text-slate-200">Django</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Fullstack</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" class="w-4 h-4 bg-white rounded p-0.5" alt="Flask">
+                    <span class="text-xs font-medium text-slate-200">Flask</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-rose-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span> Inteligencia Artificial & Data Science
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" class="w-4 h-4" alt="PyTorch">
+                    <span class="text-xs font-medium text-slate-200">PyTorch</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">IA / LLM</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" class="w-4 h-4 bg-white rounded p-0.5" alt="Pandas">
+                    <span class="text-xs font-medium text-slate-200">Pandas</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">Data</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/instagram/E4405F" class="w-3.5 h-3.5" alt="Instagram">
+              <span class="text-slate-200 font-medium">Instagram</span>
+              <span class="text-[10px] text-purple-400">(Django Monolith)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/openai/412991" class="w-3.5 h-3.5 bg-white rounded-full p-0.5" alt="OpenAI">
+              <span class="text-slate-200 font-medium">OpenAI</span>
+              <span class="text-[10px] text-amber-400">(FastAPI Servicios)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/spotify/1DB954" class="w-3.5 h-3.5" alt="Spotify">
+              <span class="text-slate-200 font-medium">Spotify</span>
+              <span class="text-[10px] text-rose-400">(Data ML Pipelines)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 3. SECTION BASES DE DATOS ==================== -->
+      <div class="tech-card md:col-span-2 bg-slate-900/90 backdrop-blur-sm border-2 border-sky-500 hover:border-sky-400 rounded-2xl p-6 transition-all duration-300 shadow-xl flex flex-col justify-between"
+           data-categories="database"
+           data-search="database bases de datos postgresql mysql sqlite mongodb redis cassandra supabase firebase pinecone orm prisma sqlalchemy hibernate redis cache sql nosql vector apple instagram twitter github netflix ebay">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 bg-sky-500/20 rounded-xl border border-sky-400/30 text-sky-400">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-slate-100">Bases de Datos & Persistencia (Databases)</h2>
+                  <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40">Sección Especial</span>
+                </div>
+                <p class="text-xs text-slate-400">Capas de almacenamiento estructurado (SQL), no estructurado (NoSQL), almacenamiento en caché y bases vectoriales para IA.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Sub-columns for DB Types -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 my-4">
+
+            <!-- Relational SQL -->
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/90">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Relacionales (SQL)</h3>
+                <span class="text-[10px] bg-sky-500/10 text-sky-300 px-2 py-0.5 rounded border border-sky-500/20">ACID & Tablas</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mb-3">Estructura estricta, transacciones complejas y consistencia garantizada.</p>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" class="w-5 h-5" alt="PostgreSQL">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">PostgreSQL</p>
+                      <p class="text-[10px] text-slate-400">ORM: Prisma, SQLAlchemy</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Apple, Twitch</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" class="w-5 h-5 bg-white rounded p-0.5" alt="MySQL">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">MySQL</p>
+                      <p class="text-[10px] text-slate-400">ORM: Hibernate, Sequelize</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">YouTube, Meta</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" class="w-5 h-5 bg-white rounded p-0.5" alt="SQLite">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">SQLite</p>
+                      <p class="text-[10px] text-slate-400">Lera en archivo local</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Android, iOS, Chrome</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- NoSQL & In-Memory -->
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/90">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">2. NoSQL & Caché</h3>
+                <span class="text-[10px] bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded border border-amber-500/20">Documentos & Key-Value</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mb-3">Esquemas flexibles, alta velocidad y baja latencia en memoria.</p>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" class="w-5 h-5" alt="MongoDB">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">MongoDB</p>
+                      <p class="text-[10px] text-slate-400">Documentos JSON/BSON</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">eBay, SEGA</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" class="w-5 h-5" alt="Redis">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">Redis</p>
+                      <p class="text-[10px] text-slate-400">Caché ultrarrápido In-Memory</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Twitter, GitHub</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/apachecassandra/12E6C8" class="w-5 h-5" alt="Cassandra">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">Cassandra</p>
+
+                      <p class="text-[10px] text-slate-400">Almacén de columnas masivo</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Netflix, Spotify</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vector & Managed Cloud DBs -->
+            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/90">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-rose-400 uppercase tracking-wider">3. Vector & Cloud DB (IA)</h3>
+                <span class="text-[10px] bg-rose-500/10 text-rose-300 px-2 py-0.5 rounded border border-rose-500/20">Embeddings & Serverless</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mb-3">Optimizado para búsquedas semánticas de IA y BaaS en tiempo real.</p>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/supabase/3FCF8E" class="w-5 h-5" alt="Supabase">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">Supabase</p>
+                      <p class="text-[10px] text-slate-400">PostgreSQL + Realtime BaaS</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Startups & MVPs</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" class="w-5 h-5" alt="Firebase">
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">Firebase</p>
+                      <p class="text-[10px] text-slate-400">Firestore NoSQL de Google</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Apps Móviles</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 font-bold text-[10px] flex items-center justify-center">V</span>
+                    <div>
+                      <p class="text-xs font-semibold text-slate-200">Pinecone / pgvector</p>
+                      <p class="text-[10px] text-slate-400">Búsqueda semántica para LLMs</p>
+                    </div>
+                  </div>
+                  <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">RAG / Chatbots</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 4. JAVA ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-red-500/30 hover:border-red-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend"
+           data-search="java spring boot quarkus netflix bbva jp morgan banca backend enterprise hibernate">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" class="w-10 h-10 rounded-lg p-1 bg-red-500/10 border border-red-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">Java</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">La referencia en la gran banca y sistemas corporativos por su consistencia, seguridad y concurrencia robusta.</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Backend Enterprise
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" class="w-4 h-4" alt="Spring">
+                    <span class="text-xs font-medium text-slate-200">Spring Boot</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/quarkus/4695EB" class="w-4 h-4" alt="Quarkus">
+                    <span class="text-xs font-medium text-slate-200">Quarkus</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/netflix/E50914" class="w-3.5 h-3.5" alt="Netflix">
+              <span class="text-slate-200 font-medium">Netflix</span>
+              <span class="text-[10px] text-amber-400">(Spring Services)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <span class="w-3.5 h-3.5 rounded bg-blue-600 text-white font-bold text-[8px] flex items-center justify-center">B</span>
+              <span class="text-slate-200 font-medium">BBVA / JP Morgan</span>
+              <span class="text-[10px] text-amber-400">(Core Básico)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 5. C# / .NET ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-purple-500/30 hover:border-purple-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend fullstack"
+           data-search="csharp c# dotnet aspnet blazor maui stack overflow unity backend fullstack">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" alt="C#" class="w-10 h-10 rounded-lg p-1 bg-purple-500/10 border border-purple-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">C# / .NET</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">Framework unificado de Microsoft para la nube, APIs REST, aplicaciones interactivas WebAssembly (Blazor) y motores 3D (Unity).</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-purple-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span> Backend & Web
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-original.svg" class="w-4 h-4" alt="ASP.NET">
+                    <span class="text-xs font-medium text-slate-200">ASP.NET</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-original.svg" class="w-4 h-4" alt="Blazor">
+                    <span class="text-xs font-medium text-slate-200">Blazor</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/stackoverflow/F58025" class="w-3.5 h-3.5" alt="Stack Overflow">
+              <span class="text-slate-200 font-medium">Stack Overflow</span>
+              <span class="text-[10px] text-amber-400">(.NET Web API)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 6. GO (GOLANG) ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-cyan-500/30 hover:border-cyan-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend"
+           data-search="go golang gin fiber docker kubernetes twitch backend microservices">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg" alt="Go" class="w-10 h-10 rounded-lg p-1 bg-cyan-500/10 border border-cyan-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">Go (Golang)</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">Especialmente diseñado por Google para microservicios de alto tráfico, concurrencia nativa e infraestructura en la nube.</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Microservicios & APIs
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/gin/00ADD8" class="w-4 h-4" alt="Gin">
+                    <span class="text-xs font-medium text-slate-200">Gin</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/go/00ADD8" class="w-4 h-4" alt="Fiber">
+                    <span class="text-xs font-medium text-slate-200">Fiber</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/docker/2496ED" class="w-3.5 h-3.5" alt="Docker">
+              <span class="text-slate-200 font-medium">Docker / K8s</span>
+              <span class="text-[10px] text-amber-400">(Core Engine)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/twitch/9146FF" class="w-3.5 h-3.5" alt="Twitch">
+              <span class="text-slate-200 font-medium">Twitch</span>
+              <span class="text-[10px] text-amber-400">(Chat Concurrente)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 7. RUST ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-orange-500/30 hover:border-orange-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend"
+           data-search="rust actix axum discord cloudflare backend sistemas performance">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg" alt="Rust" class="w-10 h-10 rounded-lg p-1 bg-white border border-orange-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">Rust</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">Velocidad extrema y consumo de memoria mínimo sin recolector de basura. Ideal para servicios donde cada milisegundo cuenta.</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Backend Ultra-Rápido
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg" class="w-4 h-4 bg-white rounded p-0.5" alt="Actix">
+                    <span class="text-xs font-medium text-slate-200">Actix-web</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.simpleicons.org/tokio/000000" class="w-4 h-4 bg-white rounded p-0.5" alt="Axum">
+                    <span class="text-xs font-medium text-slate-200">Axum</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Backend</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/discord/5865F2" class="w-3.5 h-3.5" alt="Discord">
+              <span class="text-slate-200 font-medium">Discord</span>
+              <span class="text-[10px] text-amber-400">(Servidor de Voz)</span>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/cloudflare/F38020" class="w-3.5 h-3.5" alt="Cloudflare">
+              <span class="text-slate-200 font-medium">Cloudflare</span>
+              <span class="text-[10px] text-amber-400">(Filtro de Red)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 8. PHP ==================== -->
+      <div class="tech-card bg-slate-900/80 backdrop-blur-sm border-2 border-indigo-500/30 hover:border-indigo-500/60 rounded-2xl p-6 transition-all duration-300 shadow-lg flex flex-col justify-between"
+           data-categories="backend fullstack"
+           data-search="php laravel symfony wordpress wikipedia backend fullstack cms">
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div class="flex items-center space-x-3">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" class="w-10 h-10 rounded-lg p-1 bg-indigo-500/10 border border-indigo-500/20">
+              <div>
+                <h2 class="text-xl font-bold text-slate-100">PHP</h2>
+                <div class="flex gap-1.5 mt-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Backend</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 mt-3 mb-4">Potencia una gran porción de la web mediante gestores de contenido (CMS) y frameworks de arquitectura elegante como Laravel.</p>
+
+          <div class="space-y-3 mb-5">
+            <div>
+              <h3 class="text-[11px] font-semibold uppercase tracking-wider text-purple-400 mb-1.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span> Frameworks & Fullstack CMS
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg" class="w-4 h-4" alt="Laravel">
+                    <span class="text-xs font-medium text-slate-200">Laravel</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Fullstack</span>
+                </div>
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+                  <div class="flex items-center space-x-2">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg" class="w-4 h-4" alt="WordPress">
+                    <span class="text-xs font-medium text-slate-200">WordPress</span>
+                  </div>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Fullstack</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <h4 class="text-[11px] font-semibold text-slate-400 mb-2">Empresas Reales & Uso</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 py-1 rounded text-xs border border-slate-700">
+              <img src="https://cdn.simpleicons.org/wikipedia/000000" class="w-3.5 h-3.5 bg-white rounded-full p-0.5" alt="Wikipedia">
+              <span class="text-slate-200 font-medium">Wikipedia</span>
+              <span class="text-[10px] text-purple-400">(MediaWiki Core)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- No Results State -->
+    <div id="noResults" class="hidden text-center py-16 bg-slate-900/40 rounded-2xl border border-slate-800 mt-6">
+      <span class="text-4xl mb-3 block">🔍</span>
+      <h3 class="text-lg font-semibold text-slate-200">No se encontraron resultados</h3>
+      <p class="text-sm text-slate-400 mt-1">Intenta con términos como "PostgreSQL", "Frontend", "FastAPI" o "Netflix".</p>
+    </div>
+
+  </main>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const techCards = document.querySelectorAll('.tech-card');
+    const noResults = document.getElementById('noResults');
+
+    let currentFilter = 'all';
+    let currentSearchTerm = '';
+
+    // Apply Filters & Search combined
+    function applyFilters() {
+      let visibleCount = 0;
+
+      techCards.forEach(card => {
+        const categories = card.getAttribute('data-categories') || '';
+        const searchData = card.getAttribute('data-search').toLowerCase();
+
+        const matchesCategory = (currentFilter === 'all') || categories.includes(currentFilter);
+        const matchesSearch = searchData.includes(currentSearchTerm);
+
+        if (matchesCategory && matchesSearch) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    // Category Button Clicks
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => {
+          b.classList.remove('bg-sky-500', 'text-white', 'active');
+          b.classList.add('bg-slate-900');
+        });
+
+        btn.classList.remove('bg-slate-900');
+        btn.classList.add('bg-sky-500', 'text-white', 'active');
+
+        currentFilter = btn.getAttribute('data-filter');
+        applyFilters();
+      });
+    });
+
+    // Search Bar Input
+    searchInput.addEventListener('input', (e) => {
+      currentSearchTerm = e.target.value.toLowerCase().trim();
+      applyFilters();
+    });
+  </script>
+</body>
+</html>

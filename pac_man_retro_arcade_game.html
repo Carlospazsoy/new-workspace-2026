@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Retro Arcade</title>
+    <style>
+        /* Estilos Retro Arcade y Reset General */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #0d0d11;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Contenedor Principal con Efecto CRT/Glow */
+        .arcade-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #000;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 51, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            border: 4px solid #1a1a2e;
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+
+        /* Encabezado e Información de Juego */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 448px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #dedede;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .score-box, .high-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .label {
+            color: #fd0000;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        /* Canvas de Juego */
+        .canvas-wrapper {
+            position: relative;
+            border: 3px solid #1919a6;
+            border-radius: 8px;
+            box-shadow: 0 0 15px #1919a6;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            background-color: #000;
+        }
+
+        /* Overlays y Pantallas de Estado */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .overlay h1 {
+            font-size: 32px;
+            color: #ffff00;
+            text-shadow: 0 0 10px #ffff00, 0 0 20px #ff0000;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .overlay p {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .arcade-btn {
+            background: linear-gradient(180deg, #ff0055 0%, #990033 100%);
+            color: white;
+            border: 2px solid #ff6699;
+            padding: 10px 24px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff0055;
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase;
+        }
+
+        .arcade-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ff0055;
+        }
+
+        .arcade-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Footer y Vidas */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 448px;
+            margin-top: 8px;
+        }
+
+        .lives-container {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            height: 20px;
+        }
+
+        .controls-hint {
+            font-size: 10px;
+            color: #888;
+        }
+
+        /* Controles Táctiles para Móvil */
+        .dpad {
+            display: none;
+            grid-template-columns: repeat(3, 45px);
+            grid-template-rows: repeat(3, 45px);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .dpad-btn {
+            background: #222;
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .dpad-btn:active {
+            background: #ffff00;
+            color: #000;
+        }
+
+        .dpad-up { grid-column: 2; grid-row: 1; }
+        .dpad-left { grid-column: 1; grid-row: 2; }
+        .dpad-down { grid-column: 2; grid-row: 3; }
+        .dpad-right { grid-column: 3; grid-row: 2; }
+
+        @media (max-width: 600px) {
+            .dpad {
+                display: grid;
+            }
+            .controls-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arcade-container">
+        <!-- Puntuación -->
+        <div class="scoreboard">
+            <div class="score-box">
+                <span class="label">PUNTAJE</span>
+                <span id="score" class="value">00</span>
+            </div>
+            <div class="high-box">
+                <span class="label">RECORD</span>
+                <span id="highscore" class="value">00</span>
+            </div>
+        </div>
+
+        <!-- Canvas Principal -->
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Pantalla de Inicio / Instrucciones -->
+            <div id="startOverlay" class="overlay">
+                <h1>PAC-MAN</h1>
+                <p>Usa las <b>Flechas</b> o <b>WASD</b> para moverte.<br>¡Come todos los puntos y evita a los fantasmas!</p>
+                <button class="arcade-btn" id="startBtn">JUGAR</button>
+            </div>
+
+            <!-- Pantalla de Game Over -->
+            <div id="gameOverOverlay" class="overlay" style="display: none;">
+                <h1 style="color: #ff0000; text-shadow: 0 0 10px #ff0000;">GAME OVER</h1>
+                <p>Puntaje Final: <span id="finalScore">0</span></p>
+                <button class="arcade-btn" id="restartBtn">REINTENTAR</button>
+            </div>
+
+            <!-- Pantalla de Victoria -->
+            <div id="victoryOverlay" class="overlay" style="display: none;">
+                <h1 style="color: #00ff00; text-shadow: 0 0 10px #00ff00;">¡VICTORIA!</h1>
+                <p>¡Has limpiado el laberinto!</p>
+                <button class="arcade-btn" id="nextLevelBtn">SIGUIENTE NIVEL</button>
+            </div>
+        </div>
+
+        <!-- Footer: Vidas y Botones -->
+        <div class="footer">
+            <div class="lives-container" id="livesContainer"></div>
+            <span class="controls-hint">PAUSA: [P] / [ESPACIO]</span>
+            <button class="arcade-btn" id="pauseBtn" style="padding: 4px 10px; font-size: 10px;">PAUSA</button>
+        </div>
+
+        <!-- D-Pad para Dispositivos Táctiles -->
+        <div class="dpad">
+            <div class="dpad-btn dpad-up" id="btnUp">▲</div>
+            <div class="dpad-btn dpad-left" id="btnLeft">◄</div>
+            <div class="dpad-btn dpad-down" id="btnDown">▼</div>
+            <div class="dpad-btn dpad-right" id="btnRight">►</div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * PAC-MAN GAME IN SINGLE FILE
+         * Retro Arcade 1980 Logic implementation with HTML5 Canvas.
+         */
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elementos UI
+        const scoreEl = document.getElementById('score');
+        const highscoreEl = document.getElementById('highscore');
+        const finalScoreEl = document.getElementById('finalScore');
+        const livesContainer = document.getElementById('livesContainer');
+        const startOverlay = document.getElementById('startOverlay');
+        const gameOverOverlay = document.getElementById('gameOverOverlay');
+        const victoryOverlay = document.getElementById('victoryOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const nextLevelBtn = document.getElementById('nextLevelBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+
+        // Configuración de la Cuadrícula y Renderizado
+        const TILE_SIZE = 16;
+        const MAP_ROWS = 21;
+        const MAP_COLS = 19;
+
+        canvas.width = MAP_COLS * TILE_SIZE; // 304px
+        canvas.height = MAP_ROWS * TILE_SIZE; // 336px
+
+        // Leyenda Mapa:
+        // 1: Pared, 0: Punto (Dot), 2: Power Pellet, 3: Vacío, 4: Casa Fantasmas
+        const INITIAL_MAP = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,2,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,2,1],
+            [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
+            [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1],
+            [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
+            [1,1,1,1,0,1,1,1,3,1,3,1,1,1,0,1,1,1,1],
+            [3,3,3,1,0,1,3,3,3,3,3,3,3,1,0,1,3,3,3],
+            [1,1,1,1,0,1,3,1,1,4,1,1,3,1,0,1,1,1,1],
+            [3,3,3,3,0,3,3,1,4,4,4,1,3,3,0,3,3,3,3],
+            [1,1,1,1,0,1,3,1,1,1,1,1,3,1,0,1,1,1,1],
+            [3,3,3,1,0,1,3,3,3,3,3,3,3,1,0,1,3,3,3],
+            [1,1,1,1,0,1,3,1,1,1,1,1,3,1,0,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
+            [1,2,0,1,0,0,0,0,0,3,0,0,0,0,0,1,0,2,1],
+            [1,1,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1],
+            [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        let map = [];
+        let score = 0;
+        let highscore = localStorage.getItem('pacman_highscore') || 0;
+        let lives = 3;
+        let gameOver = false;
+        let gameWon = false;
+        let isPaused = false;
+        let gameRunning = false;
+        let dotsRemaining = 0;
+        let frightenedTimer = 0;
+        let animationFrameId;
+
+        // Direcciones
+        const DIR_UP = { x: 0, y: -1, angle: 1.5 * Math.PI };
+        const DIR_DOWN = { x: 0, y: 1, angle: 0.5 * Math.PI };
+        const DIR_LEFT = { x: -1, y: 0, angle: Math.PI };
+        const DIR_RIGHT = { x: 1, y: 0, angle: 0 };
+
+        // Pac-Man
+        class Pacman {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = 9 * TILE_SIZE + TILE_SIZE / 2;
+                this.y = 16 * TILE_SIZE + TILE_SIZE / 2;
+                this.speed = 2;
+                this.dir = DIR_RIGHT;
+                this.nextDir = DIR_RIGHT;
+                this.radius = TILE_SIZE / 2 - 2;
+                this.mouthAngle = 0.2;
+                this.mouthSpeed = 0.02;
+            }
+
+            update() {
+                // Animar Boca
+                this.mouthAngle += this.mouthSpeed;
+                if (this.mouthAngle > 0.4 || this.mouthAngle < 0.02) {
+                    this.mouthSpeed = -this.mouthSpeed;
+                }
+
+                // Intentar cambiar dirección en cruces alineados
+                if (this.nextDir !== this.dir) {
+                    if (this.canMove(this.nextDir)) {
+                        // Alineación estricta a la cuadrícula al girar
+                        if (this.nextDir.x !== 0 && Math.abs((this.y - TILE_SIZE / 2) % TILE_SIZE) < this.speed) {
+                            this.y = Math.floor(this.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE / 2;
+                            this.dir = this.nextDir;
+                        } else if (this.nextDir.y !== 0 && Math.abs((this.x - TILE_SIZE / 2) % TILE_SIZE) < this.speed) {
+                            this.x = Math.floor(this.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE / 2;
+                            this.dir = this.nextDir;
+                        }
+                    }
+                }
+
+                // Mover en la dirección actual si no hay colisión
+                if (this.canMove(this.dir)) {
+                    this.x += this.dir.x * this.speed;
+                    this.y += this.dir.y * this.speed;
+                }
+
+                // Túneles de Teletransporte
+                if (this.x < -TILE_SIZE / 2) this.x = canvas.width + TILE_SIZE / 2;
+                if (this.x > canvas.width + TILE_SIZE / 2) this.x = -TILE_SIZE / 2;
+
+                // Colisiones con items
+                this.eatItems();
+            }
+
+            canMove(direction) {
+                const checkX = this.x + direction.x * (TILE_SIZE / 2 + 1);
+                const checkY = this.y + direction.y * (TILE_SIZE / 2 + 1);
+                
+                const col = Math.floor(checkX / TILE_SIZE);
+                const row = Math.floor(checkY / TILE_SIZE);
+
+                if (row < 0 || row >= MAP_ROWS || col < 0 || col >= MAP_COLS) return true; // Para túneles
+                return map[row][col] !== 1; // 1 es pared
+            }
+
+            eatItems() {
+                const col = Math.floor(this.x / TILE_SIZE);
+                const row = Math.floor(this.y / TILE_SIZE);
+
+                if (row >= 0 && row < MAP_ROWS && col >= 0 && col < MAP_COLS) {
+                    if (map[row][col] === 0) { // Punto Normal
+                        map[row][col] = 3;
+                        addScore(10);
+                        dotsRemaining--;
+                        checkVictory();
+                    } else if (map[row][col] === 2) { // Power Pellet
+                        map[row][col] = 3;
+                        addScore(50);
+                        dotsRemaining--;
+                        triggerFrightenedMode();
+                        checkVictory();
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = '#ffff00';
+                
+                const startAngle = this.dir.angle + this.mouthAngle;
+                const endAngle = this.dir.angle + (2 * Math.PI - this.mouthAngle);
+                
+                ctx.arc(this.x, this.y, this.radius, startAngle, endAngle);
+                ctx.lineTo(this.x, this.y);
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        // Fantasmas
+        class Ghost {
+            constructor(color, name, homeX, homeY) {
+                this.color = color;
+                this.name = name;
+                this.homeX = homeX;
+                this.homeY = homeY;
+                this.reset();
+            }
+
+            reset() {
+                this.x = this.homeX * TILE_SIZE + TILE_SIZE / 2;
+                this.y = this.homeY * TILE_SIZE + TILE_SIZE / 2;
+                this.speed = 1.5;
+                this.dir = DIR_UP;
+                this.isFrightened = false;
+                this.isEaten = false;
+            }
+
+            update() {
+                // Movimiento aleatorio en intersecciones
+                if (Math.abs((this.x - TILE_SIZE / 2) % TILE_SIZE) < this.speed && 
+                    Math.abs((this.y - TILE_SIZE / 2) % TILE_SIZE) < this.speed) {
+                    
+                    const col = Math.floor(this.x / TILE_SIZE);
+                    const row = Math.floor(this.y / TILE_SIZE);
+
+                    const validDirs = [];
+                    const possibleDirs = [DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT];
+
+                    possibleDirs.forEach(d => {
+                        // Evitar ir en sentido opuesto directo
+                        if (d.x !== -this.dir.x || d.y !== -this.dir.y) {
+                            const nextR = row + d.y;
+                            const nextC = col + d.x;
+                            if (nextR >= 0 && nextR < MAP_ROWS && nextC >= 0 && nextC < MAP_COLS) {
+                                if (map[nextR][nextC] !== 1) { // No es pared
+                                    validDirs.push(d);
+                                }
+                            }
+                        }
+                    });
+
+                    // Si no hay salidas disponibles, permitir regresar
+                    if (validDirs.length === 0) {
+                        validDirs.push({ x: -this.dir.x, y: -this.dir.y });
+                    }
+
+                    // IA básica: Seleccionar dirección al azar de las válidas
+                    this.dir = validDirs[Math.floor(Math.random() * validDirs.length)];
+                }
+
+                // Aplicar movimiento
+                const currentSpeed = this.isFrightened ? this.speed * 0.6 : this.speed;
+                this.x += this.dir.x * currentSpeed;
+                this.y += this.dir.y * currentSpeed;
+
+                // Túneles
+                if (this.x < -TILE_SIZE / 2) this.x = canvas.width + TILE_SIZE / 2;
+                if (this.x > canvas.width + TILE_SIZE / 2) this.x = -TILE_SIZE / 2;
+            }
+
+            draw() {
+                ctx.beginPath();
+                
+                // Color si está asustado
+                if (this.isFrightened) {
+                    ctx.fillStyle = frightenedTimer < 120 && Math.floor(frightenedTimer / 10) % 2 === 0 ? '#ffffff' : '#2121ff';
+                } else {
+                    ctx.fillStyle = this.color;
+                }
+
+                const r = TILE_SIZE / 2 - 2;
+                // Cabeza redondeada
+                ctx.arc(this.x, this.y - 2, r, Math.PI, 0, false);
+                // Cuerpo
+                ctx.lineTo(this.x + r, this.y + r);
+                
+                // Ondas inferiores
+                ctx.lineTo(this.x + r / 2, this.y + r - 3);
+                ctx.lineTo(this.x, this.y + r);
+                ctx.lineTo(this.x - r / 2, this.y + r - 3);
+                ctx.lineTo(this.x - r, this.y + r);
+                
+                ctx.closePath();
+                ctx.fill();
+
+                // Ojos
+                if (!this.isFrightened) {
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(this.x - 3, this.y - 3, 3, 0, Math.PI * 2);
+                    ctx.arc(this.x + 3, this.y - 3, 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Pupilas dirigiéndose hacia movimiento
+                    ctx.fillStyle = '#00f';
+                    ctx.beginPath();
+                    ctx.arc(this.x - 3 + this.dir.x, this.y - 3 + this.dir.y, 1.5, 0, Math.PI * 2);
+                    ctx.arc(this.x + 3 + this.dir.x, this.y - 3 + this.dir.y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Ojos Asustados
+                    ctx.fillStyle = '#ffb8ff';
+                    ctx.beginPath();
+                    ctx.arc(this.x - 3, this.y - 1, 1.5, 0, Math.PI * 2);
+                    ctx.arc(this.x + 3, this.y - 1, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Instancias del juego
+        const pacman = new Pacman();
+        const ghosts = [
+            new Ghost('#ff0000', 'Blinky', 9, 9),
+            new Ghost('#ffb8ff', 'Pinky', 9, 10),
+            new Ghost('#00ffff', 'Inky', 8, 10),
+            new Ghost('#ffb851', 'Clyde', 10, 10)
+        ];
+
+        // Inicializar el Mapa y Contar Puntos
+        function initMap() {
+            dotsRemaining = 0;
+            map = INITIAL_MAP.map(row => [...row]);
+            for (let r = 0; r < MAP_ROWS; r++) {
+                for (let c = 0; c < MAP_COLS; c++) {
+                    if (map[r][c] === 0 || map[r][c] === 2) {
+                        dotsRemaining++;
+                    }
+                }
+            }
+        }
+
+        // Renderizado del Escenario
+        function drawMap() {
+            for (let r = 0; r < MAP_ROWS; r++) {
+                for (let c = 0; c < MAP_COLS; c++) {
+                    const x = c * TILE_SIZE;
+                    const y = r * TILE_SIZE;
+
+                    if (map[r][c] === 1) { // Paredes
+                        ctx.strokeStyle = '#1919a6';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                    } else if (map[r][c] === 0) { // Punto Normal
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.beginPath();
+                        ctx.arc(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (map[r][c] === 2) { // Power Pellet
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.beginPath();
+                        ctx.arc(x + TILE_SIZE / 2, y + TILE_SIZE / 2, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (map[r][c] === 4) { // Puerta Casa Fantasmas
+                        ctx.strokeStyle = '#ffb8ff';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + TILE_SIZE / 2);
+                        ctx.lineTo(x + TILE_SIZE, y + TILE_SIZE / 2);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // Lógica de Puntuación
+        function addScore(points) {
+            score += points;
+            scoreEl.textContent = score.toString().padStart(2, '0');
+            if (score > highscore) {
+                highscore = score;
+                highscoreEl.textContent = highscore.toString().padStart(2, '0');
+                localStorage.setItem('pacman_highscore', highscore);
+            }
+        }
+
+        // Modo Asustado para Fantasmas
+        function triggerFrightenedMode() {
+            frightenedTimer = 360; // aprox 6 segundos a 60 FPS
+            ghosts.forEach(ghost => ghost.isFrightened = true);
+        }
+
+        // Renderizar Iconos de Vidas
+        function updateLivesUI() {
+            livesContainer.innerHTML = '';
+            for (let i = 0; i < lives; i++) {
+                const lifeIcon = document.createElement('div');
+                lifeIcon.style.width = '14px';
+                lifeIcon.style.height = '14px';
+                lifeIcon.style.backgroundColor = '#ffff00';
+                lifeIcon.style.borderRadius = '50%';
+                lifeIcon.style.boxShadow = '0 0 5px #ffff00';
+                livesContainer.appendChild(lifeIcon);
+            }
+        }
+
+        // Detección de Colisiones
+        function checkCollisions() {
+            ghosts.forEach(ghost => {
+                const dist = Math.hypot(pacman.x - ghost.x, pacman.y - ghost.y);
+                if (dist < TILE_SIZE / 1.2) {
+                    if (ghost.isFrightened) {
+                        // Fantasma Comido
+                        addScore(200);
+                        ghost.reset();
+                    } else {
+                        // Pacman Muere
+                        handlePlayerDeath();
+                    }
+                }
+            });
+        }
+
+        function handlePlayerDeath() {
+            lives--;
+            updateLivesUI();
+            if (lives <= 0) {
+                gameOver = true;
+                finalScoreEl.textContent = score;
+                gameOverOverlay.style.display = 'flex';
+            } else {
+                // Reaparecer
+                pacman.reset();
+                ghosts.forEach(g => g.reset());
+            }
+        }
+
+        function checkVictory() {
+            if (dotsRemaining <= 0) {
+                gameWon = true;
+                victoryOverlay.style.display = 'flex';
+            }
+        }
+
+        // Bucle Principal del Juego (Loop)
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            if (!isPaused && !gameOver && !gameWon) {
+                // Actualizar
+                pacman.update();
+
+                if (frightenedTimer > 0) {
+                    frightenedTimer--;
+                    if (frightenedTimer === 0) {
+                        ghosts.forEach(g => g.isFrightened = false);
+                    }
+                }
+
+                ghosts.forEach(ghost => ghost.update());
+                checkCollisions();
+
+                // Dibujar
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawMap();
+                pacman.draw();
+                ghosts.forEach(ghost => ghost.draw());
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // Inicialización y Reinicio
+        function startGame() {
+            score = 0;
+            lives = 3;
+            gameOver = false;
+            gameWon = false;
+            isPaused = false;
+            gameRunning = true;
+            scoreEl.textContent = '00';
+            highscoreEl.textContent = highscore.toString().padStart(2, '0');
+            
+            initMap();
+            updateLivesUI();
+            pacman.reset();
+            ghosts.forEach(g => g.reset());
+
+            startOverlay.style.display = 'none';
+            gameOverOverlay.style.display = 'none';
+            victoryOverlay.style.display = 'none';
+
+            cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        }
+
+        function nextLevel() {
+            gameWon = false;
+            initMap();
+            pacman.reset();
+            ghosts.forEach(g => g.reset());
+            victoryOverlay.style.display = 'none';
+        }
+
+        function togglePause() {
+            if (!gameRunning || gameOver || gameWon) return;
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? 'REANUDAR' : 'PAUSA';
+        }
+
+        // Controles Teclado
+        window.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    pacman.nextDir = DIR_UP;
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    pacman.nextDir = DIR_DOWN;
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    pacman.nextDir = DIR_LEFT;
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    pacman.nextDir = DIR_RIGHT;
+                    break;
+                case 'p':
+                case 'P':
+                case ' ':
+                    togglePause();
+                    break;
+            }
+        });
+
+        // Controles Táctiles (D-Pad)
+        document.getElementById('btnUp').addEventListener('click', () => pacman.nextDir = DIR_UP);
+        document.getElementById('btnDown').addEventListener('click', () => pacman.nextDir = DIR_DOWN);
+        document.getElementById('btnLeft').addEventListener('click', () => pacman.nextDir = DIR_LEFT);
+        document.getElementById('btnRight').addEventListener('click', () => pacman.nextDir = DIR_RIGHT);
+
+        // Listeners de Botones UI
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        nextLevelBtn.addEventListener('click', nextLevel);
+        pauseBtn.addEventListener('click', togglePause);
+
+        // Dibujar pantalla inicial limpia
+        initMap();
+        drawMap();
+    </script>
+</body>
+</html>

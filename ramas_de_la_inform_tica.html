@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorador de Ramas de la Informática & Ciencias de la Computación</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            slate: {
+              850: '#0f172a',
+              900: '#0b0f19',
+              950: '#05070e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.25);
+    }
+
+    .neon-border-cyan {
+      box-shadow: 0 0 15px -3px rgba(6, 182, 212, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-30 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">
+              Ramas de la Informática
+            </h1>
+            <p class="text-xs text-slate-400">Guía Interactiva del Ecosistema de las Ciencias de la Computación</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/50 self-start md:self-auto">
+          <button id="tab-branches" onclick="switchMainTab('branches')" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md">
+            <i class="fa-solid fa-layer-group mr-1.5"></i> Explorador
+          </button>
+          <button id="tab-quiz" onclick="switchMainTab('quiz')" class="px-4 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-all">
+            <i class="fa-solid fa-compass mr-1.5"></i> ¿Cuál es tu Rama?
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER FOR BRANCHES EXPLORER -->
+  <main id="view-branches" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    
+    <!-- SEARCH & FILTER SECTION -->
+    <div class="mb-8 space-y-4">
+      <!-- Search Bar -->
+      <div class="relative max-w-2xl mx-auto md:mx-0">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+          <i class="fa-solid fa-magnifying-glass text-lg"></i>
+        </div>
+        <input 
+          type="text" 
+          id="search-input"
+          oninput="filterBranches()"
+          placeholder="Buscar por rol, tecnología, concepto (ej: Python, AWS, Hacking, Kubernetes, React, IA)..."
+          class="w-full pl-11 pr-10 py-3.5 bg-slate-900 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-inner transition-all"
+        >
+        <button id="clear-search" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Filter Category Buttons -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar text-sm" id="filter-pills">
+        <!-- Generated via JS -->
+      </div>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Dynamic rendering via JS -->
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="empty-state" class="hidden text-center py-16 glass-card rounded-2xl my-8">
+      <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 text-2xl">
+        <i class="fa-solid fa-ghost"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-200">No se encontraron áreas coincidentes</h3>
+      <p class="text-slate-400 text-sm mt-1">Prueba buscando con otros términos como "Python", "Cloud", "Seguridad" o borra el filtro.</p>
+      <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors">
+        Limpiar Filtros
+      </button>
+    </div>
+
+  </main>
+
+  <!-- MAIN CONTAINER FOR QUIZ / ADVISOR -->
+  <main id="view-quiz" class="hidden max-w-3xl mx-auto px-4 sm:px-6 py-12 flex-grow w-full">
+    <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="text-center mb-8">
+        <span class="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold tracking-wide uppercase">Orientador Profesional</span>
+        <h2 class="text-2xl sm:text-3xl font-bold mt-2 text-white">¿Qué rama de la Informática se adapta a ti?</h2>
+        <p class="text-slate-400 text-sm mt-2">Responde estas sencillas preguntas sobre tus gustos e intereses para descubrir tu perfil ideal.</p>
+      </div>
+
+      <div id="quiz-container">
+        <!-- Quiz Steps Rendered dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DETAIL VIEW -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transition-all my-8" onclick="event.stopPropagation()">
+      
+      <!-- Close Button -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Modal Dynamic Content -->
+      <div id="modal-content">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2026 Ecosistema de Ramas de la Informática & CS. Diseñado para estudiantes y desarrolladores.</p>
+      <div class="flex items-center space-x-4">
+        <span class="hover:text-slate-300 cursor-pointer"><i class="fa-solid fa-code text-indigo-400 mr-1"></i> Interactivo</span>
+        <span class="hover:text-slate-300 cursor-pointer"><i class="fa-solid fa-laptop-code text-emerald-400 mr-1"></i> Modern Tech</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // DATA SOURCE: Computer Science / IT Branches
+    const branchesData = [
+      {
+        id: "web-mobile",
+        title: "Desarrollo Web & Mobile",
+        category: "Desarrollo Software",
+        icon: "fa-brands fa-react",
+        color: "from-cyan-500 to-blue-600",
+        badgeBg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+        description: "Creación de aplicaciones interactivas, plataformas web y apps nativas o multiplataforma en dispositivos móviles.",
+        demand: "Muy Alta 📈",
+        roles: ["Frontend Developer", "Backend Engineer", "Fullstack Developer", "Mobile Engineer (iOS/Android)", "QA / Automation Tester"],
+        stack: ["React", "Next.js", "Flutter", "Swift", "Kotlin", "Node.js", "FastAPI", "TypeScript"],
+        companies: [
+          { name: "Uber", icon: "fa-solid fa-car" },
+          { name: "Airbnb", icon: "fa-solid fa-house" },
+          { name: "Spotify", icon: "fa-brands fa-spotify" },
+          { name: "WhatsApp", icon: "fa-brands fa-whatsapp" }
+        ],
+        learningPath: [
+          "1. Fundamentos de la web: HTML5, CSS3 moderno (Flexbox/Grid), JavaScript ES6+.",
+          "2. Frontend Frameworks: React, Vue o Angular + Manejo de estado y APIs Rest/GraphQL.",
+          "3. Backend & Base de Datos: Node.js/Python, SQL (PostgreSQL) y NoSQL (MongoDB).",
+          "4. Desarrollo Móvil: React Native, Flutter o lenguaje nativo (Swift/Kotlin).",
+          "5. Arquitectura Web: SSR, PWA, Caching, Seguridad Web (OWASP) y Testing."
+        ],
+        dayInLife: "Diseñas componentes visuales reutilizables, integras APIs consumiendo endpoints del servidor, optimizas tiempos de carga web y rendimiento de la app móvil, y coordinas con diseñadores UX/UI."
+      },
+      {
+        id: "ai-data",
+        title: "Inteligencia Artificial & Data Science",
+        category: "IA & Data",
+        icon: "fa-solid fa-brain",
+        color: "from-purple-500 to-indigo-600",
+        badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+        description: "Modelado matemático, aprendizaje automático (ML), redes neuronales, Large Language Models (LLM) y procesamiento de datos masivos.",
+        demand: "Extrema 🚀",
+        roles: ["Machine Learning Engineer", "Data Scientist", "AI Architect", "Data Engineer", "NLP / Computer Vision Specialist"],
+        stack: ["Python", "PyTorch", "TensorFlow", "Hugging Face", "Databricks", "Apache Spark", "LangChain", "Pandas"],
+        companies: [
+          { name: "OpenAI", icon: "fa-solid fa-robot" },
+          { name: "Google DeepMind", icon: "fa-brands fa-google" },
+          { name: "Tesla (Autopilot)", icon: "fa-solid fa-bolt" },
+          { name: "Anthropic", icon: "fa-solid fa-brain" }
+        ],
+        learningPath: [
+          "1. Matemáticas y Estadística: Álgebra lineal, Cálculo multivariable, Probabilidad y Estadística.",
+          "2. Programación de Datos: Python avanzado, NumPy, Pandas, SQL y visualización de datos.",
+          "3. Machine Learning Clásico: Scikit-learn, Regresiones, Árboles de decisión, Clustering.",
+          "4. Deep Learning & LLMs: Redes neuronales (CNN, RNN, Transformers) con PyTorch o TensorFlow.",
+          "5. MLOps: Despliegue de modelos, pipelines de CI/CD para ML, monitoreo en producción."
+        ],
+        dayInLife: "Llimpias y transformas datasets gigantes, entrenas y ajustas hiperparámetros de modelos predictivos, optimizas la latencia de inferencia de un modelo LLM e interpretas métricas estadísticas."
+      },
+      {
+        id: "cloud-devops",
+        title: "Cloud Computing & DevOps / SRE",
+        category: "Cloud & DevOps",
+        icon: "fa-solid fa-cloud-arrow-up",
+        color: "from-amber-500 to-orange-600",
+        badgeBg: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+        description: "Infraestructura automatizada como código, alta disponibilidad, pipelines de integración/despliegue continuo (CI/CD) y orquestación.",
+        demand: "Muy Alta 📈",
+        roles: ["Cloud Architect", "DevOps Engineer", "Site Reliability Engineer (SRE)", "Infrastructure Engineer"],
+        stack: ["AWS", "Azure", "GCP", "Docker", "Kubernetes", "Terraform", "GitHub Actions", "Ansible"],
+        companies: [
+          { name: "Netflix", icon: "fa-solid fa-film" },
+          { name: "Cloudflare", icon: "fa-solid fa-shield-halved" },
+          { name: "HashiCorp", icon: "fa-solid fa-cubes" },
+          { name: "Amazon AWS", icon: "fa-brands fa-aws" }
+        ],
+        learningPath: [
+          "1. Sistemas Operativos & Shell: Linux avanzado (Bash), Gestión de memoria, procesos y almacenamiento.",
+          "2. Redes & Protocolos: TCP/IP, DNS, HTTPS, Balanceadores de carga, VPNs.",
+          "3. Contenedores & IaC: Docker, Docker Compose, Terraform y CloudFormation.",
+          "4. Cloud Providers: Dominio de servicios core en AWS, Azure o GCP.",
+          "5. CI/CD & Orquestación: Kubernetes, Helm, GitLab CI, GitHub Actions, Prometheus/Grafana."
+        ],
+        dayInLife: "Escribes código para aprovisionar servidores automáticamente, mantienes clusters de Kubernetes en producción, monitoreas latencias del sistema y respondes a incidentes para garantizar un uptime del 99.99%."
+      },
+      {
+        id: "cybersecurity",
+        title: "Ciberseguridad & Hacking Ético",
+        category: "Ciberseguridad",
+        icon: "fa-solid fa-user-ninja",
+        color: "from-emerald-500 to-teal-600",
+        badgeBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        description: "Protección de datos y sistemas, auditoría de vulnerabilidades (Pentesting), detección de amenazas en tiempo real y forense digital.",
+        demand: "Muy Alta 📈",
+        roles: ["Pentester / Ethical Hacker (Red Team)", "Security Analyst (Blue Team)", "DevSecOps Engineer", "Cryptographer"],
+        stack: ["Kali Linux", "Wireshark", "Metasploit", "Burp Suite", "CrowdStrike", "Splunk", "Nmap"],
+        companies: [
+          { name: "CrowdStrike", icon: "fa-solid fa-shield-cat" },
+          { name: "Palo Alto Networks", icon: "fa-solid fa-lock" },
+          { name: "HackerOne", icon: "fa-solid fa-bug" },
+          { name: "Mandiant", icon: "fa-solid fa-eye" }
+        ],
+        learningPath: [
+          "1. Fundamentos de Redes & Sistemas: Protocolos de red, arquitectura de SO (Windows/Linux) y Scripting (Python/Bash).",
+          "2. Seguridad Web & Aplicaciones: OWASP Top 10, XSS, SQLi, CSRF, autenticación segura.",
+          "3. Red Team (Ofensivo): Escaneo de redes, explotación con Metasploit/Burp Suite, ingeniería social.",
+          "4. Blue Team (Defensivo): Análisis de logs (SIEM), respuesta a incidentes, análisis de Malware.",
+          "5. Certificaciones Sugeridas: CompTIA Security+, EJPT, OSCP, CISSP."
+        ],
+        dayInLife: "Simulas ataques reales para encontrar brechas en una web o aplicación móvil, analizas tráfico sospechoso de red, configuras reglas de firewall o auditas que la infraestructura cumpla normas de privacidad."
+      },
+      {
+        id: "networks-sysadmin",
+        title: "Redes, Sistemas & Administración",
+        category: "Sistemas & Redes",
+        icon: "fa-solid fa-server",
+        color: "from-blue-500 to-indigo-700",
+        badgeBg: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+        description: "Diseño de topologías de red, routing/switching, servidores físicos, centros de datos y mantenimiento de infraestructura corporativa.",
+        demand: "Sostenida 🏢",
+        roles: ["Network Engineer", "System Administrator (SysAdmin)", "Infrastructure Manager", "Datacenter Engineer"],
+        stack: ["Cisco CCNA", "Linux (Debian/RHEL)", "Windows Server", "WireGuard", "Nginx", "BGP / OSPF", "Active Directory"],
+        companies: [
+          { name: "Cisco", icon: "fa-solid fa-network-wired" },
+          { name: "AT&T", icon: "fa-solid fa-tower-cell" },
+          { name: "Equinix", icon: "fa-solid fa-database" },
+          { name: "Cloudflare", icon: "fa-solid fa-globe" }
+        ],
+        learningPath: [
+          "1. Arquitectura de Hardware & SO: Instalación y configuración de Linux Server y Windows Server.",
+          "2. Fundamentos de Redes: Modelo OSI, Subnetting IPv4/IPv6, Switches, Routers, VLANs.",
+          "3. Protocolos & Servicios: DNS, DHCP, SSH, VPNs, Active Directory, LDAP, Nginx/Apache.",
+          "4. Automatización & Monitoreo: Ansible, Nagios, Zabbix, scripts en Python/Powershell.",
+          "5. Alta Disponibilidad: Clusterización, Virtualización (VMware, Proxmox, KVM), Backups y DR."
+        ],
+        dayInLife: "Configuras routers y firewalls corporativos, administras permisos de usuarios de la empresa, resuelves caídas de conectividad de red y gestionas servidores físicos o máquinas virtuales."
+      },
+      {
+        id: "gaming-xr",
+        title: "Desarrollo de Videojuegos & XR",
+        category: "Gaming & XR",
+        icon: "fa-solid fa-gamepad",
+        color: "from-pink-500 to-rose-600",
+        badgeBg: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+        description: "Programación de motores 3D, física, lógica de interacción, inteligencia artificial para juegos y experiencias en Realidad Virtual / Aumentada.",
+        demand: "Alta 🎮",
+        roles: ["Game Developer", "Graphics Programmer", "AR/VR Engineer", "Gameplay Programmer", "Shader Developer"],
+        stack: ["Unity", "Unreal Engine 5", "C++", "C#", "WebGL / Three.js", "Blender", "Meta Horizon SDK"],
+        companies: [
+          { name: "Epic Games", icon: "fa-solid fa-dragon" },
+          { name: "Nintendo", icon: "fa-solid fa-gamepad" },
+          { name: "Riot Games", icon: "fa-solid fa-trophy" },
+          { name: "Meta Labs", icon: "fa-solid fa-vr-cardboard" }
+        ],
+        learningPath: [
+          "1. Programación Orientada a Objetos: C# (para Unity) o C++ (para Unreal Engine).",
+          "2. Matemáticas para Juegos: Vectores, Matrices, Quaternions, Trigonometría y Física 3D.",
+          "3. Motor de Juegos (Game Engine): Luces, Cámaras, Mesh, Collisions, Prefabs, UI de juegos.",
+          "4. Graphics & Shaders: HLSL/GLSL, PBR Rendering, Optimización de Draw Calls y FPS.",
+          "5. XR (VR/AR): SDKs de Meta Quest, ARKit/ARCore, tracking de manos e interacciones hápitcas."
+        ],
+        dayInLife: "Programas la mecánica de movimiento y física de un personaje, escribes shaders de iluminación en tiempo real, optimizas el uso de GPU para mantener 90 FPS estables en visores VR."
+      },
+      {
+        id: "embedded-iot",
+        title: "IoT & Sistemas Embebidos",
+        category: "IoT & Hardware",
+        icon: "fa-solid fa-microchip",
+        color: "from-emerald-400 to-green-600",
+        badgeBg: "bg-emerald-400/10 text-emerald-300 border-emerald-400/20",
+        description: "Programación de bajo nivel en microcontroladores, sensores, domótica, vehículos autónomos y dispositivos inteligentes conectados.",
+        demand: "Alta 🔋",
+        roles: ["Embedded Systems Developer", "Firmware Engineer", "IoT Solutions Architect", "Hardware Engineer"],
+        stack: ["C", "C++", "Rust", "ESP32", "Raspberry Pi", "FreeRTOS", "MQTT", "Arduino"],
+        companies: [
+          { name: "Tesla", icon: "fa-solid fa-car-side" },
+          { name: "Philips Hue", icon: "fa-solid fa-lightbulb" },
+          { name: "Garmin", icon: "fa-solid fa-heart-pulse" },
+          { name: "Arduino", icon: "fa-solid fa-microchip" }
+        ],
+        learningPath: [
+          "1. Fundamentos de Electrónica: Voltaje, corriente, sensores, comunicación serie (UART, SPI, I2C).",
+          "2. Programación de Bajo Nivel: C y C++ avanzado, gestión manual de memoria y punteros.",
+          "3. Microcontroladores: STM32, ESP32, AVR, manipulación directa de registros.",
+          "4. Sistemas Operativos en Tiempo Real: FreeRTOS, manejo de tareas, interrupciones y semáforos.",
+          "5. Protocolos IoT & Seguridad: MQTT, CoAP, BLE, Wi-Fi, encriptación en dispositivos limitados."
+        ],
+        dayInLife: "Escribes firmware optimizado en C que consume el mínimo de energía posible, lees datos de un sensor analógico, procesas la señal y la envías cifrada por MQTT a un servidor en la nube."
+      },
+      {
+        id: "blockchain-web3",
+        title: "Blockchain, Web3 & Criptografía",
+        category: "Blockchain",
+        icon: "fa-solid fa-cubes",
+        color: "from-violet-500 to-fuchsia-600",
+        badgeBg: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+        description: "Desarrollo de registros inmutables descentralizados, contratos inteligentes (Smart Contracts), DeFi y pruebas de conocimiento cero (ZK).",
+        demand: "Especializada 💎",
+        roles: ["Smart Contract Developer", "Blockchain Architect", "Web3 Developer", "Cryptography Specialist"],
+        stack: ["Solidity", "Rust", "Ethereum (EVM)", "Web3.js / Ethers.js", "Hardhat / Foundry", "IPFS"],
+        companies: [
+          { name: "Chainlink", icon: "fa-solid fa-link" },
+          { name: "Uniswap", icon: "fa-solid fa-coins" },
+          { name: "Coinbase", icon: "fa-solid fa-wallet" },
+          { name: "Consensys", icon: "fa-brands fa-ethereum" }
+        ],
+        learningPath: [
+          "1. Fundamentos Criptográficos: Funciones Hash (SHA256), Criptografía de Llave Pública/Privada, Firmas digitales.",
+          "2. Arquitectura Distributed Ledger: Bloques, Árboles de Merkle, Mecanismos de Consenso (PoW, PoS).",
+          "3. Smart Contracts: Solidity (Ethereum EVM) o Rust (Solana/Near).",
+          "4. Herramientas de Desarrollo: Hardhat, Foundry, Remix, Testing y Auditorías de Seguridad.",
+          "5. Frontend Web3: Conexión de dApps con billeteras (MetaMask) utilizando Ethers.js o Wagmi."
+        ],
+        dayInLife: "Escribes y auditas un contrato inteligente financiero para evitar vulnerabilidades de reentrada, simulas transacciones en una red de prueba y conectas la dApp frontend a la blockchain."
+      }
+    ];
+
+    // Filter Categories configuration
+    const categories = [
+      "Todas",
+      "Desarrollo Software",
+      "IA & Data",
+      "Cloud & DevOps",
+      "Ciberseguridad",
+      "Sistemas & Redes",
+      "Gaming & XR",
+      "IoT & Hardware",
+      "Blockchain"
+    ];
+
+    // State
+    let activeCategory = "Todas";
+    let currentSearchTerm = "";
+
+    // Quiz Questions Data
+    const quizQuestions = [
+      {
+        question: "¿Qué tipo de problemas te resulta más apasionante resolver?",
+        options: [
+          { label: "Crear interfaces visuales bonitas y aplicaciones dinámicas para usuarios finales.", target: "web-mobile" },
+          { label: "Encontrar patrones en datos, entrenar IA y resolver acertijos matemáticos.", target: "ai-data" },
+          { label: "Automatizar servidores, optimizar despliegues y escalar sistemas masivos.", target: "cloud-devops" },
+          { label: "Encontrar fallos de seguridad, descifrar códigos y defender sistemas.", target: "cybersecurity" },
+          { label: "Crear mundos virtuales, videojuegos interactivos o física 3D.", target: "gaming-xr" },
+          { label: "Programar dispositivos físicos, sensores, chips y robots.", target: "embedded-iot" }
+        ]
+      },
+      {
+        question: "¿En qué entorno de trabajo te sentirías más cómodo en el día a día?",
+        options: [
+          { label: "Navegadores web, frameworks como React y pantallas móviles.", target: "web-mobile" },
+          { label: "Jupyter Notebooks, datasets masivos, gráficos estadísticos y modelos de PyTorch.", target: "ai-data" },
+          { label: "Consola de comandos Linux, Docker, nubes AWS/GCP y archivos YAML.", target: "cloud-devops" },
+          { label: "Distribuciones Kali Linux, escáneres de puertos y herramientas de análisis forense.", target: "cybersecurity" },
+          { label: "Motores gráficos como Unity/Unreal Engine, editores 3D y visores VR.", target: "gaming-xr" },
+          { label: "Placas de circuitos, prototipos con Arduino/ESP32 y código C de bajo nivel.", target: "embedded-iot" }
+        ]
+      }
+    ];
+
+    let quizStep = 0;
+    let quizScores = {};
+
+    // Initialize Application
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCategoryPills();
+      renderCards();
+    });
+
+    // Render Filter Pills
+    function renderCategoryPills() {
+      const container = document.getElementById("filter-pills");
+      container.innerHTML = categories.map(cat => {
+        const isActive = cat === activeCategory;
+        const activeClass = isActive 
+          ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 border-indigo-500" 
+          : "bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border-slate-700/50";
+        return `
+          <button 
+            onclick="setCategory('${cat}')"
+            class="px-3.5 py-1.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition-all duration-200 ${activeClass}">
+            ${cat}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      renderCategoryPills();
+      filterBranches();
+    }
+
+    // Filter Logic
+    function filterBranches() {
+      const searchInput = document.getElementById("search-input");
+      currentSearchTerm = searchInput.value.toLowerCase().trim();
+      
+      const clearBtn = document.getElementById("clear-search");
+      if (currentSearchTerm.length > 0) {
+        clearBtn.classList.remove("hidden");
+      } else {
+        clearBtn.classList.add("hidden");
+      }
+
+      renderCards();
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById("search-input");
+      searchInput.value = "";
+      currentSearchTerm = "";
+      activeCategory = "Todas";
+      renderCategoryPills();
+      filterBranches();
+    }
+
+    // Render Branch Cards
+    function renderCards() {
+      const grid = document.getElementById("cards-grid");
+      const emptyState = document.getElementById("empty-state");
+
+      const filtered = branchesData.filter(b => {
+        // Category Filter
+        const matchesCategory = activeCategory === "Todas" || b.category === activeCategory;
+        
+        // Search Term Filter
+        const query = currentSearchTerm;
+        const matchesSearch = !query || (
+          b.title.toLowerCase().includes(query) ||
+          b.description.toLowerCase().includes(query) ||
+          b.roles.some(r => r.toLowerCase().includes(query)) ||
+          b.stack.some(s => s.toLowerCase().includes(query)) ||
+          b.companies.some(c => c.name.toLowerCase().includes(query))
+        );
+
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = "";
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+
+      grid.innerHTML = filtered.map(item => {
+        return `
+          <div 
+            onclick="openModal('${item.id}')"
+            class="glass-card rounded-2xl p-5 flex flex-col justify-between cursor-pointer group transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+            
+            <!-- Top Gradient Accent Bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.color}"></div>
+
+            <div>
+              <!-- Header with Icon & Category Badge -->
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700/80 flex items-center justify-center text-xl text-indigo-400 group-hover:scale-110 group-hover:text-white transition-all shadow-md">
+                  <i class="${item.icon}"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide border ${item.badgeBg}">
+                  ${item.category}
+                </span>
+              </div>
+
+              <!-- Title & Description -->
+              <h3 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">
+                ${item.title}
+              </h3>
+              <p class="text-slate-400 text-xs mt-2 line-clamp-3 leading-relaxed">
+                ${item.description}
+              </p>
+
+              <!-- Demand Pill -->
+              <div class="mt-3 flex items-center text-xs text-slate-300 bg-slate-800/60 w-fit px-2.5 py-1 rounded-lg border border-slate-700/40">
+                <span class="text-slate-400 mr-1.5 font-medium">Demanda:</span>
+                <span class="font-semibold text-emerald-400">${item.demand}</span>
+              </div>
+
+              <!-- Tech Stack Badges -->
+              <div class="mt-4 pt-3 border-t border-slate-800">
+                <div class="text-[11px] text-slate-400 font-semibold mb-2">STACK CLAVE</div>
+                <div class="flex flex-wrap gap-1.5">
+                  ${item.stack.slice(0, 4).map(s => `
+                    <span class="px-2 py-0.5 bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-[10px] rounded-md border border-slate-700/60">
+                      ${s}
+                    </span>
+                  `).join("")}
+                  ${item.stack.length > 4 ? `<span class="text-[10px] text-slate-500 px-1">+${item.stack.length - 4} más</span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Footer / Companies -->
+            <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <div class="flex items-center space-x-2 overflow-hidden">
+                <span class="text-[10px] uppercase font-semibold text-slate-500">Casos:</span>
+                <div class="flex space-x-2 text-slate-300 font-medium truncate text-[11px]">
+                  ${item.companies.slice(0, 2).map(c => `<span>${c.name}</span>`).join(" • ")}
+                </div>
+              </div>
+              <div class="text-indigo-400 group-hover:translate-x-1 transition-transform pl-1">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Modal Operations
+    function openModal(id) {
+      const item = branchesData.find(b => b.id === id);
+      if (!item) return;
+
+      const modalContent = document.getElementById("modal-content");
+      
+      modalContent.innerHTML = `
+        <!-- Modal Header -->
+        <div class="p-6 sm:p-8 bg-gradient-to-b from-slate-800/80 to-slate-900 border-b border-slate-800">
+          <div class="flex items-center space-x-3 mb-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl text-indigo-400 shadow-lg">
+              <i class="${item.icon}"></i>
+            </div>
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${item.badgeBg}">
+                ${item.category}
+              </span>
+              <h2 class="text-2xl font-bold text-white mt-1">${item.title}</h2>
+            </div>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mt-2">${item.description}</p>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 sm:p-8 space-y-6">
+          
+          <!-- Key Roles -->
+          <div>
+            <h4 class="text-xs uppercase font-bold text-indigo-400 tracking-wider mb-3">
+              <i class="fa-solid fa-user-gear mr-1.5"></i> Sub-ramas y Roles Principales
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${item.roles.map(r => `
+                <div class="bg-slate-800/60 border border-slate-700/50 rounded-lg p-2.5 text-xs font-medium text-slate-200 flex items-center">
+                  <i class="fa-solid fa-angle-right text-indigo-400 mr-2 text-[10px]"></i> ${r}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <!-- Complete Tech Stack -->
+          <div>
+            <h4 class="text-xs uppercase font-bold text-indigo-400 tracking-wider mb-3">
+              <i class="fa-solid fa-layer-group mr-1.5"></i> Tecnologías & Stack Completo
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              ${item.stack.map(s => `
+                <span class="px-3 py-1 bg-slate-800 text-indigo-200 text-xs rounded-lg border border-indigo-500/20 font-medium">
+                  ${s}
+                </span>
+              `).join("")}
+            </div>
+          </div>
+
+          <!-- Real World Companies -->
+          <div>
+            <h4 class="text-xs uppercase font-bold text-indigo-400 tracking-wider mb-3">
+              <i class="fa-solid fa-building mr-1.5"></i> Empresas y Casos de Uso Reales
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              ${item.companies.map(c => `
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-3 text-center flex flex-col items-center justify-center">
+                  <i class="${c.icon} text-lg text-slate-300 mb-1"></i>
+                  <span class="text-xs font-semibold text-slate-200">${c.name}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <!-- Day in the Life -->
+          <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-4">
+            <h4 class="text-xs uppercase font-bold text-indigo-300 tracking-wider mb-1.5">
+              <i class="fa-solid fa-sun mr-1.5"></i> Un día en el trabajo
+            </h4>
+            <p class="text-xs text-slate-300 leading-relaxed">${item.dayInLife}</p>
+          </div>
+
+          <!-- Learning Roadmap -->
+          <div>
+            <h4 class="text-xs uppercase font-bold text-indigo-400 tracking-wider mb-3">
+              <i class="fa-solid fa-route mr-1.5"></i> Ruta de Aprendizaje Recomendada
+            </h4>
+            <div class="space-y-2.5">
+              ${item.learningPath.map(step => `
+                <div class="bg-slate-800/40 border border-slate-700/40 rounded-xl p-3 text-xs text-slate-300 leading-relaxed">
+                  ${step}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      document.getElementById("detail-modal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("detail-modal").classList.add("hidden");
+      document.body.style.overflow = "auto";
+    }
+
+    // Modal click outside to close
+    document.getElementById("detail-modal").addEventListener("click", closeModal);
+
+    // Tab Switcher
+    function switchMainTab(tab) {
+      const branchesView = document.getElementById("view-branches");
+      const quizView = document.getElementById("view-quiz");
+      const tabBranchesBtn = document.getElementById("tab-branches");
+      const tabQuizBtn = document.getElementById("tab-quiz");
+
+      if (tab === 'branches') {
+        branchesView.classList.remove("hidden");
+        quizView.classList.add("hidden");
+        tabBranchesBtn.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md";
+        tabQuizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-all";
+      } else {
+        branchesView.classList.add("hidden");
+        quizView.classList.remove("hidden");
+        tabQuizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md";
+        tabBranchesBtn.className = "px-4 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-all";
+        initQuiz();
+      }
+    }
+
+    // Quiz Logic
+    function initQuiz() {
+      quizStep = 0;
+      quizScores = {};
+      renderQuizStep();
+    }
+
+    function renderQuizStep() {
+      const container = document.getElementById("quiz-container");
+      
+      if (quizStep >= quizQuestions.length) {
+        // Calculate Top Result
+        let topTarget = "web-mobile";
+        let maxScore = -1;
+        for (const [target, score] of Object.entries(quizScores)) {
+          if (score > maxScore) {
+            maxScore = score;
+            topTarget = target;
+          }
+        }
+
+        const match = branchesData.find(b => b.id === topTarget);
+
+        container.innerHTML = `
+          <div class="text-center py-6">
+            <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-emerald-500/30">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">¡Tu rama recomendada es!</h3>
+            <div class="mt-4 p-6 bg-slate-800/80 border border-slate-700 rounded-2xl max-w-md mx-auto">
+              <div class="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center text-2xl text-indigo-400 mx-auto mb-3">
+                <i class="${match.icon}"></i>
+              </div>
+              <h4 class="text-lg font-bold text-white">${match.title}</h4>
+              <p class="text-slate-300 text-xs mt-2">${match.description}</p>
+              <button onclick="openModalFromQuiz('${match.id}')" class="mt-5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-indigo-600/30">
+                Ver Detalles y Ruta de Aprendizaje
+              </button>
+            </div>
+            <button onclick="initQuiz()" class="mt-6 text-xs text-slate-400 hover:text-white underline">
+              Reiniciar Orientador
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const q = quizQuestions[quizStep];
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-3">
+            <span>Pregunta ${quizStep + 1} de ${quizQuestions.length}</span>
+            <div class="w-24 bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-indigo-500 h-full" style="width: ${((quizStep + 1) / quizQuestions.length) * 100}%"></div>
+            </div>
+          </div>
+
+          <h3 class="text-lg font-semibold text-white leading-snug">${q.question}</h3>
+
+          <div class="space-y-3">
+            ${q.options.map((opt, idx) => `
+              <button 
+                onclick="answerQuiz('${opt.target}')"
+                class="w-full text-left p-4 bg-slate-800/60 hover:bg-indigo-950/40 border border-slate-700/60 hover:border-indigo-500/50 rounded-xl text-xs font-medium text-slate-200 transition-all flex items-center justify-between group">
+                <span>${opt.label}</span>
+                <i class="fa-solid fa-chevron-right text-slate-500 group-hover:text-indigo-400 text-xs"></i>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function answerQuiz(target) {
+      quizScores[target] = (quizScores[target] || 0) + 1;
+      quizStep++;
+      renderQuizStep();
+    }
+
+    function openModalFromQuiz(id) {
+      switchMainTab('branches');
+      openModal(id);
+    }
+  </script>
+</body>
+</html>
