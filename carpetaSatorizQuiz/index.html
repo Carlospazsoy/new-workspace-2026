@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ed">
+  <meta name="description" content="Un quiz de formation pour mieux reconnaître les fruits et légumes en caisse.">
+  <title>Le bon produit — Quiz de formation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Le bon produit, accueil">
+      <span class="brand-icon" aria-hidden="true">●</span>
+      <span>Le bon <strong>produit</strong></span>
+    </a>
+    <span class="topbar-caption">QUIZ DE FORMATION · FRUITS &amp; LÉGUMES</span>
+    <span class="topbar-count">5 QUESTIONS</span>
+  </header>
+
+  <main class="page-shell">
+    <p class="save-status" id="save-status" role="status" aria-live="polite" hidden></p>
+
+    <section class="intro-panel" id="intro-screen">
+      <div class="intro-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> MIEUX RECONNAÎTRE, MIEUX ENCAISSER</p>
+        <h1>Le bon produit,<br><em>du premier coup.</em></h1>
+        <p class="intro-description">Entraînez votre œil à distinguer les variétés de pommes et de pommes de terre. Cinq questions, quelques minutes, et c’est parti.</p>
+        <div class="intro-facts" aria-label="Détails du quiz">
+          <span><span aria-hidden="true">◷</span> Environ 3 minutes</span>
+          <span><span aria-hidden="true">✓</span> 5 questions</span>
+        </div>
+      </div>
+
+      <div class="start-card">
+        <div class="card-spark" aria-hidden="true">✳</div>
+        <p class="eyebrow">AVANT DE COMMENCER</p>
+        <h2>Comment vous appelez-vous&nbsp;?</h2>
+        <p>Votre nom apparaîtra sur votre résultat.</p>
+        <form id="start-form">
+          <label for="player-name">Votre prénom ou identifiant</label>
+          <input id="player-name" name="playerName" type="text" maxlength="24" autocomplete="given-name" placeholder="Ex. Camille" required>
+          <button class="button button-primary" type="submit">Commencer le quiz <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="privacy-note"><span aria-hidden="true">●</span> Votre progression est enregistrée sur cet appareil.</div>
+      </div>
+      <div class="intro-decoration" aria-hidden="true">
+        <span class="decor-leaf leaf-one"></span><span class="decor-leaf leaf-two"></span>
+      </div>
+    </section>
+
+    <section class="quiz-panel" id="quiz-screen" hidden aria-labelledby="question-title">
+      <div class="quiz-heading">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> À VOUS DE JOUER, <span id="player-greeting"></span></p>
+          <h1>Ouvrez l’œil.</h1>
+        </div>
+        <div class="quiz-actions">
+          <div class="question-counter" aria-live="polite"><strong id="question-number">01</strong><span> / 05</span></div>
+          <button class="button button-reset" id="reset-quiz-button" type="button">Réinitialiser</button>
+        </div>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="Progression du quiz" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+        <span id="progress-bar"></span>
+      </div>
+
+      <article class="question-card">
+        <div class="product-visual" id="product-visual"></div>
+        <div class="question-content">
+          <p class="product-category" id="product-category"></p>
+          <h2 id="question-title" tabindex="-1"></h2>
+          <p class="question-hint" id="question-hint"></p>
+          <form id="answer-form">
+            <fieldset>
+              <legend class="sr-only">Choisissez une ou plusieurs réponses</legend>
+              <div class="answer-list" id="answer-list"></div>
+            </fieldset>
+            <div class="feedback" id="feedback" aria-live="polite" hidden>
+              <strong class="feedback-status"></strong>
+              <span class="feedback-explanation"></span>
+            </div>
+            <button class="button button-primary answer-submit" id="answer-submit" type="submit">Valider ma réponse <span aria-hidden="true">→</span></button>
+            <button class="button button-primary next-button" id="next-button" type="button" hidden>Question suivante <span aria-hidden="true">→</span></button>
+          </form>
+        </div>
+      </article>
+      <p class="visual-note">Photos de référence, non spécifiques à chaque variété · Remplacez-les par les photos de vos produits pour un entraînement fidèle.</p>
+    </section>
+
+    <section class="result-panel" id="result-screen" hidden aria-labelledby="result-title">
+      <div class="result-card">
+        <div class="result-icon" aria-hidden="true">✳</div>
+        <p class="eyebrow"><span class="eyebrow-line"></span> QUIZ TERMINÉ</p>
+        <h1 id="result-title">Bien joué, <span id="result-name"></span>&nbsp;!</h1>
+        <p class="result-message" id="result-message"></p>
+        <div class="score-display"><strong id="score-value">0</strong><span>/ 5</span><small>bonnes réponses</small></div>
+        <div class="result-details" id="result-details"></div>
+        <button class="button button-primary" id="restart-button" type="button">Recommencer <span aria-hidden="true">↻</span></button>
+      </div>
+      <p class="visual-note">Pour reconnaître réellement chaque variété, utilisez les photos et fiches produit de votre magasin.</p>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <span>APPRENDRE ENSEMBLE, À CHAQUE PASSAGE EN CAISSE</span>
+    <span>FRUITS <b>·</b> LÉGUMES <b>·</b> PRÉCISION</span>
+  </footer>
+</body>
+</html>

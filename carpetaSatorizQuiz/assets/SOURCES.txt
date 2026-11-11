@@ -1,0 +1,13 @@
+Photo assets
+
+apples-red.jpg
+Photographer: Unsplash contributor (image ID photo-1568702846914-96b305d2aaeb)
+Source: https://images.unsplash.com/photo-1568702846914-96b305d2aaeb
+License: Unsplash License, https://unsplash.com/license
+This is a generic apple photo; it does not identify a specific variety.
+
+potatoes.jpg
+Photographer: Unsplash contributor (image ID photo-1518977676601-b53f82aba655)
+Source: https://images.unsplash.com/photo-1518977676601-b53f82aba655
+License: Unsplash License, https://unsplash.com/license
+This is a generic potato photo; it does not identify a specific variety.
