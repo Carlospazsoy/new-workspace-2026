@@ -7,7 +7,7 @@
   <meta name="description" content="Un quiz de formation pour mieux reconnaître les fruits et légumes en caisse.">
   <title>Le bon produit — Quiz de formation</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <script type="module" src="script.js"></script>
 </head>
 <body>
   <header class="topbar">
@@ -41,12 +41,46 @@
         <form id="start-form">
           <label for="player-name">Votre prénom ou identifiant</label>
           <input id="player-name" name="playerName" type="text" maxlength="24" autocomplete="given-name" placeholder="Ex. Camille" required>
-          <button class="button button-primary" type="submit">Commencer le quiz <span aria-hidden="true">→</span></button>
+          <button class="button button-primary" type="submit">Jouer en solo <span aria-hidden="true">→</span></button>
         </form>
-        <div class="privacy-note"><span aria-hidden="true">●</span> Votre progression est enregistrée sur cet appareil.</div>
+        <div class="room-controls">
+          <button class="button button-room" id="create-room-button" type="button" disabled>Créer une salle</button>
+          <div class="join-room-controls">
+            <label class="sr-only" for="room-code-input">Code de la salle</label>
+            <input id="room-code-input" type="text" inputmode="text" maxlength="6" autocomplete="off" placeholder="CODE SALLE" aria-label="Code de la salle">
+            <button class="button button-room" id="join-room-button" type="button" disabled>Rejoindre</button>
+          </div>
+          <p class="room-status" id="room-status" role="status" aria-live="polite">Connexion au multijoueur…</p>
+          <p class="room-privacy-note">En salle, votre prénom, vos réponses et votre score sont accessibles aux membres de cette salle.</p>
+        </div>
+        <div class="privacy-note"><span aria-hidden="true">●</span> Progression solo enregistrée sur cet appareil.</div>
       </div>
       <div class="intro-decoration" aria-hidden="true">
         <span class="decor-leaf leaf-one"></span><span class="decor-leaf leaf-two"></span>
+      </div>
+    </section>
+
+    <section class="lobby-panel" id="lobby-screen" hidden aria-labelledby="lobby-title">
+      <div class="lobby-card">
+        <p class="eyebrow"><span class="eyebrow-line"></span> SALLE MULTIJOUEUR</p>
+        <h1 id="lobby-title">La partie se prépare.</h1>
+        <p class="lobby-description" id="lobby-description">Partagez le code. L’hôte lance le quiz ; chacun répond à son rythme et le classement se met à jour en direct.</p>
+        <div class="room-code-card">
+          <span>CODE DE LA SALLE</span>
+          <strong id="room-code-display"></strong>
+          <button class="button button-room" id="copy-room-code-button" type="button">Copier le code</button>
+        </div>
+        <div class="lobby-players-heading">
+          <h2>Joueurs</h2>
+          <span id="lobby-player-count"></span>
+        </div>
+        <ul class="lobby-player-list" id="lobby-player-list" aria-live="polite"></ul>
+        <p class="room-status" id="lobby-status" role="status" aria-live="polite"></p>
+        <div class="lobby-actions">
+          <button class="button button-primary" id="start-room-button" type="button" hidden>Lancer la partie <span aria-hidden="true">→</span></button>
+          <span id="host-wait-message" hidden>En attente du lancement par l’hôte…</span>
+          <button class="button button-room" id="leave-room-button" type="button">Quitter la salle</button>
+        </div>
       </div>
     </section>
 
@@ -64,6 +98,10 @@
       <div class="progress-track" role="progressbar" aria-label="Progression du quiz" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
         <span id="progress-bar"></span>
       </div>
+      <section class="scoreboard" id="scoreboard" aria-label="Classement de la salle" hidden>
+        <div class="scoreboard-heading"><strong>Classement en direct</strong><span id="scoreboard-room-code"></span></div>
+        <ol id="scoreboard-list"></ol>
+      </section>
 
       <article class="question-card">
         <div class="product-visual" id="product-visual"></div>
@@ -95,6 +133,10 @@
         <h1 id="result-title">Bien joué, <span id="result-name"></span>&nbsp;!</h1>
         <p class="result-message" id="result-message"></p>
         <div class="score-display"><strong id="score-value">0</strong><span>/ 5</span><small>bonnes réponses</small></div>
+        <section class="scoreboard result-scoreboard" id="result-scoreboard" aria-label="Classement final" hidden>
+          <div class="scoreboard-heading"><strong>Classement de la salle</strong><span id="result-room-code"></span></div>
+          <ol id="result-scoreboard-list"></ol>
+        </section>
         <div class="result-details" id="result-details"></div>
         <button class="button button-primary" id="restart-button" type="button">Recommencer <span aria-hidden="true">↻</span></button>
       </div>
